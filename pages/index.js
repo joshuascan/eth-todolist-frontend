@@ -41,11 +41,27 @@ export default function Home() {
       web3ModalRef.current = new Web3Modal({
         network: "rinkeby",
         providerOptions: {},
-        disableInjectedProvider: false,
       });
       connectWallet();
     }
   }, [walletConnected, connectWallet]);
+
+  const addTask = async (taskDescription) => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      const todolistContract = new Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+
+      const tx = await todolistContract.createTask(taskDescription);
+      setLoading(true);
+
+      await tx.wait();
+      setLoading(false);
+    } catch (err) {}
+  };
 
   return (
     <div>
