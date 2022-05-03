@@ -1,4 +1,5 @@
 import Head from "next/head";
+import TaskWindow from "../components/TaskWindow";
 import styles from "../styles/Home.module.css";
 import Web3Modal from "web3modal";
 import { providers, Contract } from "ethers";
@@ -40,11 +41,12 @@ export default function Home() {
 
       const _tasks = await todolistContract.getTasks();
 
-      const tasksCleaned = _tasks.map((task) => {
+      const tasksCleaned = _tasks.map((task, index) => {
         return {
           description: task.description,
           completed: task.completed,
           timestamp: new Date(task.timestamp * 1000),
+          id: index,
         };
       });
 
@@ -72,7 +74,6 @@ export default function Home() {
       connectWallet();
     } else if (walletConnected) {
       getTasks();
-      console.log(tasks);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walletConnected, connectWallet, getTasks]);
@@ -133,24 +134,6 @@ export default function Home() {
           <button onClick={connectWallet}>Connect Wallet</button>
         ) : (
           <div>
-            <div>
-              {tasks.map((task, index) => {
-                return (
-                  <div key={index}>
-                    <input
-                      type="checkbox"
-                      value={index}
-                      checked={task.completed}
-                      onChange={handleComplete}
-                    />
-                    <p>
-                      {task.description}: {task.completed ? "COMPLETED" : null}
-                    </p>
-                    <p>{task.timestamp.toString()}</p>
-                  </div>
-                );
-              })}
-            </div>
             <input
               name="description"
               value={newTaskDescription}
@@ -162,6 +145,7 @@ export default function Home() {
               Add Task
             </button>
             {loading && <div>Loading...</div>}
+            <TaskWindow tasks={tasks} handleComplete={handleComplete} />
           </div>
         )}
       </div>
