@@ -41,12 +41,16 @@ export default function Home() {
       const _tasks = await todolistContract.getTasks();
 
       const tasksCleaned = _tasks.map((task) => {
-        return { ...task, timestamp: new Date(task.timestamp * 1000) };
+        return {
+          description: task.description,
+          completed: task.completed,
+          timestamp: new Date(task.timestamp * 1000),
+        };
       });
 
       setTasks(tasksCleaned);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   }, []);
 
@@ -54,11 +58,10 @@ export default function Home() {
     try {
       await getProviderOrSigner();
       setWalletConnected(true);
-      getTasks();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
-  }, [getTasks]);
+  }, []);
 
   useEffect(() => {
     if (!walletConnected) {
@@ -67,8 +70,12 @@ export default function Home() {
         providerOptions: {},
       });
       connectWallet();
+    } else if (walletConnected) {
+      getTasks();
+      console.log(tasks);
     }
-  }, [walletConnected, connectWallet]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletConnected, connectWallet, getTasks]);
 
   const addTask = async () => {
     try {
@@ -85,13 +92,32 @@ export default function Home() {
       await tx.wait();
       setLoading(false);
       setNewTaskDescription("");
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const handleDescriptionChange = (event) => {
     setNewTaskDescription(event.target.value);
+  };
+
+  const handleComplete = async (event) => {
+    try {
+      const signer = await getProviderOrSigner(true);
+      const todolistContract = new Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+
+      const tx = await todolistContract.toggleCompleted(event.target.value);
+      setLoading(true);
+
+      await tx.wait();
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -111,7 +137,16 @@ export default function Home() {
               {tasks.map((task, index) => {
                 return (
                   <div key={index}>
-                    <p>{task.description}</p>
+                    <input
+                      type="checkbox"
+                      value={index}
+                      checked={task.completed}
+                      onChange={handleComplete}
+                    />
+                    <p>
+                      {task.description}: {task.completed ? "COMPLETED" : null}
+                    </p>
+                    <p>{task.timestamp.toString()}</p>
                   </div>
                 );
               })}
