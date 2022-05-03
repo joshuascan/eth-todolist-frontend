@@ -8,6 +8,7 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants";
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [newTaskDescription, setNewTaskDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const web3ModalRef = useRef();
 
@@ -28,32 +29,13 @@ export default function Home() {
     return provider;
   };
 
-  const connectWallet = useCallback(async () => {
+  const getTasks = useCallback(async () => {
     try {
-      await getProviderOrSigner();
-      setWalletConnected(true);
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!walletConnected) {
-      web3ModalRef.current = new Web3Modal({
-        network: "rinkeby",
-        providerOptions: {},
-      });
-      connectWallet();
-    }
-  }, [walletConnected, connectWallet]);
-
-  const getTasks = async () => {
-    try {
-      const provider = await getProviderOrSigner();
+      const signer = await getProviderOrSigner(true);
       const todolistContract = new Contract(
         CONTRACT_ADDRESS,
         CONTRACT_ABI,
-        provider
+        signer
       );
 
       const _tasks = await todolistContract.getTasks();
@@ -66,9 +48,29 @@ export default function Home() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
 
-  const addTask = async (taskDescription) => {
+  const connectWallet = useCallback(async () => {
+    try {
+      await getProviderOrSigner();
+      setWalletConnected(true);
+      getTasks();
+    } catch (err) {
+      console.error(err);
+    }
+  }, [getTasks]);
+
+  useEffect(() => {
+    if (!walletConnected) {
+      web3ModalRef.current = new Web3Modal({
+        network: "rinkeby",
+        providerOptions: {},
+      });
+      connectWallet();
+    }
+  }, [walletConnected, connectWallet]);
+
+  const addTask = async () => {
     try {
       const signer = await getProviderOrSigner(true);
       const todolistContract = new Contract(
@@ -77,14 +79,19 @@ export default function Home() {
         signer
       );
 
-      const tx = await todolistContract.createTask(taskDescription);
+      const tx = await todolistContract.createTask(newTaskDescription);
       setLoading(true);
 
       await tx.wait();
       setLoading(false);
+      setNewTaskDescription("");
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleDescriptionChange = (event) => {
+    setNewTaskDescription(event.target.value);
   };
 
   return (
@@ -96,8 +103,31 @@ export default function Home() {
       </Head>
       <h1>To-Do List Dapp</h1>
       <div>
-        {!walletConnected && (
+        {!walletConnected ? (
           <button onClick={connectWallet}>Connect Wallet</button>
+        ) : (
+          <div>
+            <div>
+              {tasks.map((task, index) => {
+                return (
+                  <div key={index}>
+                    <p>{task.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+            <input
+              name="description"
+              value={newTaskDescription}
+              onChange={handleDescriptionChange}
+              placeholder="Task description..."
+              disabled={loading}
+            />
+            <button onClick={addTask} disabled={loading}>
+              Add Task
+            </button>
+            {loading && <div>Loading...</div>}
+          </div>
         )}
       </div>
     </div>
