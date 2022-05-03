@@ -7,6 +7,7 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants";
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const web3ModalRef = useRef();
 
@@ -46,6 +47,27 @@ export default function Home() {
     }
   }, [walletConnected, connectWallet]);
 
+  const getTasks = async () => {
+    try {
+      const provider = await getProviderOrSigner();
+      const todolistContract = new Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        provider
+      );
+
+      const _tasks = await todolistContract.getTasks();
+
+      const tasksCleaned = _tasks.map((task) => {
+        return { ...task, timestamp: new Date(task.timestamp * 1000) };
+      });
+
+      setTasks(tasksCleaned);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const addTask = async (taskDescription) => {
     try {
       const signer = await getProviderOrSigner(true);
@@ -60,7 +82,9 @@ export default function Home() {
 
       await tx.wait();
       setLoading(false);
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
