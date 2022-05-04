@@ -8,6 +8,8 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants";
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
+  const [signer, setSigner] = useState();
+  const [contract, setContract] = useState();
   const [tasks, setTasks] = useState([]);
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,6 +18,10 @@ export default function Home() {
   const getProviderOrSigner = async (needSigner = false) => {
     const instance = await web3ModalRef.current.connect();
     const provider = new providers.Web3Provider(instance);
+    const _signer = provider.getSigner();
+    const _contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, _signer);
+    setSigner(_signer);
+    setContract(_contract);
 
     const { chainId } = await provider.getNetwork();
     if (chainId !== 4) {
@@ -30,16 +36,16 @@ export default function Home() {
     return provider;
   };
 
-  const getTasks = useCallback(async () => {
+  const getTasks = async () => {
     try {
-      const signer = await getProviderOrSigner(true);
-      const todolistContract = new Contract(
-        CONTRACT_ADDRESS,
-        CONTRACT_ABI,
-        signer
-      );
+      // const signer = await getProviderOrSigner(true);
+      // const todolistContract = new Contract(
+      //   CONTRACT_ADDRESS,
+      //   CONTRACT_ABI,
+      //   signer
+      // );
 
-      const _tasks = await todolistContract.getTasks();
+      const _tasks = await contract.getTasks();
 
       const tasksCleaned = _tasks.map((task, index) => {
         return {
@@ -54,7 +60,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  };
 
   const connectWallet = useCallback(async () => {
     try {
@@ -65,7 +71,14 @@ export default function Home() {
     }
   }, []);
 
+  const listener = (block) => {
+    console.log("new task created");
+    console.log(block);
+    getTasks();
+  };
+
   useEffect(() => {
+    console.log("USE EFFECT");
     if (!walletConnected) {
       web3ModalRef.current = new Web3Modal({
         network: "rinkeby",
@@ -74,9 +87,13 @@ export default function Home() {
       connectWallet();
     } else if (walletConnected) {
       getTasks();
+      contract.on("TaskCreated", listener);
+      return () => {
+        contract.off("TaskCreated", listener);
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletConnected, connectWallet, getTasks]);
+  }, [walletConnected]);
 
   const addTask = async () => {
     try {
