@@ -121,29 +121,35 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="mt-16 flex justify-center">
       <Head>
         <title>Ethereum To-Do List Dapp</title>
         <meta name="description" content="To-Do List app built on Ethereum" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="mt-12 flex flex-col items-center">
-        <h1>To-Do List Dapp</h1>
+      <div className="bg-slate-800 w-1/3 px-8 py-16 flex flex-col items-center">
+        <h1 className="text-5xl ">To-Do List Dapp</h1>
         <div>
           {!walletConnected ? (
             <button onClick={connectWallet}>Connect Wallet</button>
           ) : (
             <div>
-              <input
-                name="description"
-                value={newTaskDescription}
-                onChange={handleDescriptionChange}
-                placeholder="Task description..."
-                disabled={loading}
-              />
-              <button onClick={addTask} disabled={loading}>
-                Add Task
-              </button>
+              <div className="flex justify-center">
+                <input
+                  name="description"
+                  value={newTaskDescription}
+                  onChange={handleDescriptionChange}
+                  placeholder="Task description..."
+                  disabled={loading}
+                />
+                <button
+                  onClick={addTask}
+                  disabled={loading}
+                  className="text-2xl"
+                >
+                  Add Task
+                </button>
+              </div>
               {loading && <div>Loading...</div>}
               <TaskWindow tasks={tasks} handleComplete={handleComplete} />
             </div>

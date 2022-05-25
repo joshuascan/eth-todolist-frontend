@@ -10,9 +10,11 @@ const TaskWindow = ({ tasks, handleComplete }) => {
 
   return (
     <div>
-      <button onClick={toggleCompleted}>
-        {!showCompleted ? "Show Completed" : "Show Active"}
-      </button>
+      <div className="flex justify-center">
+        <button onClick={toggleCompleted} className="text-xl">
+          {!showCompleted ? "Show Completed" : "Show Active"}
+        </button>
+      </div>
       <TaskList
         tasks={tasks}
         handleComplete={handleComplete}
