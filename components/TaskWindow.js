@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import TaskList from "../components/TaskList";
 
 const TaskWindow = ({ tasks, handleComplete }) => {

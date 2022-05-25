@@ -1,6 +1,5 @@
 import Head from "next/head";
 import TaskWindow from "../components/TaskWindow";
-import styles from "../styles/Home.module.css";
 import Web3Modal from "web3modal";
 import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -36,15 +35,8 @@ export default function Home() {
     return provider;
   };
 
-  const getTasks = async () => {
+  const getTasks = useCallback(async () => {
     try {
-      // const signer = await getProviderOrSigner(true);
-      // const todolistContract = new Contract(
-      //   CONTRACT_ADDRESS,
-      //   CONTRACT_ABI,
-      //   signer
-      // );
-
       const _tasks = await contract.getTasks();
 
       const tasksCleaned = _tasks.map((task, index) => {
@@ -60,7 +52,7 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [contract]);
 
   const connectWallet = useCallback(async () => {
     try {
@@ -71,14 +63,7 @@ export default function Home() {
     }
   }, []);
 
-  const listener = (block) => {
-    console.log("new task created");
-    console.log(block);
-    getTasks();
-  };
-
   useEffect(() => {
-    console.log("USE EFFECT");
     if (!walletConnected) {
       web3ModalRef.current = new Web3Modal({
         network: "rinkeby",
@@ -87,13 +72,8 @@ export default function Home() {
       connectWallet();
     } else if (walletConnected) {
       getTasks();
-      contract.on("TaskCreated", listener);
-      return () => {
-        contract.off("TaskCreated", listener);
-      };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [walletConnected]);
+  }, [walletConnected, getTasks, connectWallet]);
 
   const addTask = async () => {
     try {
@@ -110,6 +90,7 @@ export default function Home() {
       await tx.wait();
       setLoading(false);
       setNewTaskDescription("");
+      getTasks();
     } catch (error) {
       console.error(error);
     }
@@ -133,6 +114,7 @@ export default function Home() {
 
       await tx.wait();
       setLoading(false);
+      getTasks();
     } catch (error) {
       console.error(error);
     }
