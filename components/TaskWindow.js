@@ -11,7 +11,10 @@ const TaskWindow = ({ tasks, handleComplete }) => {
   return (
     <div>
       <div className="flex justify-center">
-        <button onClick={toggleCompleted} className="text-xl">
+        <button
+          onClick={toggleCompleted}
+          className="text-l bg-slate-900 p-3 rounded-xl mt-4 uppercase"
+        >
           {!showCompleted ? "Show Completed" : "Show Active"}
         </button>
       </div>
