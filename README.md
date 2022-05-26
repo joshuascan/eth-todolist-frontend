@@ -1,6 +1,6 @@
 # Ethereum Todolist App
 
-To-do list app built on the Ethereum network using Next.js, ethers, and Tailwind CSS.
+To-do list app built on the Rinkeby test network using Next.js, ethers, and Tailwind CSS.
 
 Use "npm run dev" to run locally.
 
