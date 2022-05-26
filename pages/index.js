@@ -127,20 +127,31 @@ export default function Home() {
         <meta name="description" content="To-Do List app built on Ethereum" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="bg-slate-800 rounded-lg shadow-2xl px-8 py-16 flex flex-col items-center">
+      <div
+        className={`bg-slate-800 rounded-lg shadow-2xl px-8 pt-10 ${
+          walletConnected ? "pb-8" : "pb-12"
+        } mb-8 flex flex-col items-center w-1/3`}
+      >
         <h1 className="text-5xl mb-6 font-bold tracking-wide">
           To-Do List Dapp
         </h1>
-        <div>
+        <div className="w-full">
           {!walletConnected ? (
-            <button onClick={connectWallet}>Connect Wallet</button>
+            <div className="flex flex-col items-center">
+              <button
+                onClick={connectWallet}
+                className="text-2xl w-2/3 mt-8 font-bold p-4 rounded bg-teal-400"
+              >
+                Connect Wallet
+              </button>
+            </div>
           ) : (
             <div>
-              <div className="flex justify-center">
+              <div className="flex justify-center mt-2">
                 <button
                   onClick={addTask}
                   disabled={loading}
-                  className="text-2xl h-10 w-10 rounded-l bg-teal-400 ml-2"
+                  className="text-2xl h-10 w-10 rounded-l bg-teal-400"
                 >
                   +
                 </button>
@@ -150,7 +161,7 @@ export default function Home() {
                   onChange={handleDescriptionChange}
                   placeholder="Add task..."
                   disabled={loading}
-                  className="rounded-r"
+                  className="rounded-r pl-2 focus:outline-none"
                 />
               </div>
               {loading && <div>Loading...</div>}

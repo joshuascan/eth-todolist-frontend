@@ -1,6 +1,6 @@
 const TaskList = ({ tasks, handleComplete, isCompleted }) => {
   return (
-    <div className="w-full">
+    <div className="w-10/12 mt-4">
       {tasks.map((task) => {
         if (isCompleted === task.completed)
           return (
@@ -14,16 +14,23 @@ const TaskList = ({ tasks, handleComplete, isCompleted }) => {
                 onClick={handleComplete}
                 className={`h-16 w-16 mr-2 rounded ${
                   task.completed
-                    ? "bg-purple-500 hover:bg-purple-600"
+                    ? "bg-orange-500 hover:bg-orange-600"
                     : "bg-teal-400 hover:bg-teal-600"
-                } hover:bg-purple-800 duration-200`}
+                } duration-200`}
               >
                 {task.completed ? "Undo" : "✓"}
               </button>
               <div>
                 <p className="text-lg">{task.description}</p>
                 <p className="text-sm text-slate-300/75">
-                  {task.timestamp.toString()}
+                  {task.timestamp.toLocaleDateString("en-US", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "numeric",
+                    year: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
                 </p>
               </div>
             </div>

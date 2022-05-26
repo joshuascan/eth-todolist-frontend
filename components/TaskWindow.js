@@ -4,18 +4,24 @@ import TaskList from "../components/TaskList";
 const TaskWindow = ({ tasks, handleComplete }) => {
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const toggleCompleted = () => {
-    setShowCompleted(!showCompleted);
-  };
-
   return (
-    <div>
-      <div className="flex justify-center">
+    <div className="flex flex-col items-center w-full">
+      <div className="flex bg-slate-700 w-fit mt-6 rounded-xl justify-center">
         <button
-          onClick={toggleCompleted}
-          className="text-l bg-slate-900 p-3 rounded-xl mt-4 uppercase"
+          onClick={() => setShowCompleted(false)}
+          className={`text-l ${
+            !showCompleted ? "bg-slate-900" : ""
+          } p-3 rounded-xl uppercase`}
         >
-          {!showCompleted ? "Show Completed" : "Show Active"}
+          Active
+        </button>
+        <button
+          onClick={() => setShowCompleted(true)}
+          className={`text-l ${
+            showCompleted ? "bg-slate-900" : ""
+          } p-3 rounded-xl uppercase`}
+        >
+          Completed
         </button>
       </div>
       <TaskList
