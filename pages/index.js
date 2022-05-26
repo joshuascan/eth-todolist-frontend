@@ -11,6 +11,7 @@ export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [currentAccount, setCurrentAccount] = useState("");
   const [contract, setContract] = useState();
+  const [network, setNetwork] = useState("");
   const [tasks, setTasks] = useState([]);
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,10 +29,11 @@ export default function Home() {
     setContract(_contract);
 
     const { chainId } = await provider.getNetwork();
-    if (chainId !== 4) {
-      window.alert("Change the network to Rinkeby");
-      throw new Error("Change network to Rinkeby");
-    }
+    setNetwork(chainId);
+    // if (chainId !== 4) {
+    //   window.alert("Change the network to Rinkeby");
+    //   throw new Error("Change network to Rinkeby");
+    // }
 
     if (needSigner) {
       const signer = provider.getSigner();
@@ -54,6 +56,26 @@ export default function Home() {
       window.ethereum?.removeListener("accountsChanged", handleAccountChange);
     };
   });
+
+  useEffect(() => {
+    const handleChainChanged = (_chainId) => {
+      window.location.reload();
+      setNetwork(_chainId);
+    };
+    window.ethereum?.on("chainChanged", handleChainChanged);
+    return () => {
+      window.ethereum?.removeListener("chainChanged", handleChainChanged);
+    };
+  });
+
+  const switchNetwork = async () => {
+    if (window.ethereum) {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x4" }],
+      });
+    }
+  };
 
   const getTasks = useCallback(async () => {
     try {
@@ -178,16 +200,24 @@ export default function Home() {
           </h1>
           <div className="w-full">
             {!walletConnected ? (
-              <div className="flex flex-col items-center">
-                <h2>
-                  Connect your wallet to the Rinkeby Test Network in order to
-                  use
-                </h2>
+              <div className="flex justify-center">
                 <button
                   onClick={connectWallet}
                   className="text-2xl w-2/3 mt-8 font-bold p-4 rounded bg-teal-400"
                 >
                   Connect Wallet
+                </button>
+              </div>
+            ) : network !== 4 ? (
+              <div className="flex flex-col items-center">
+                <h2 className="mt-2 italic text-red-600">
+                  Please switch to the Rinkeby Test Network
+                </h2>
+                <button
+                  onClick={switchNetwork}
+                  className="text-2xl w-2/3 mt-6 font-bold p-4 rounded bg-teal-400"
+                >
+                  Switch to Rinkeby
                 </button>
               </div>
             ) : (
