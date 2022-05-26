@@ -6,7 +6,7 @@ const TaskWindow = ({ tasks, handleComplete }) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="flex bg-slate-700 w-fit mt-6 rounded-xl justify-center">
+      <div className="flex bg-slate-700 w-fit mt-3 rounded-xl justify-center">
         <button
           onClick={() => setShowCompleted(false)}
           className={`text-l ${

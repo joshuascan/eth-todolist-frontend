@@ -1,5 +1,6 @@
 import Head from "next/head";
 import TaskWindow from "../components/TaskWindow";
+import Spinner from "../components/Spinner";
 import Web3Modal from "web3modal";
 import { providers, Contract } from "ethers";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -7,7 +8,6 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../constants";
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
-  const [signer, setSigner] = useState();
   const [contract, setContract] = useState();
   const [tasks, setTasks] = useState([]);
   const [newTaskDescription, setNewTaskDescription] = useState("");
@@ -19,7 +19,6 @@ export default function Home() {
     const provider = new providers.Web3Provider(instance);
     const _signer = provider.getSigner();
     const _contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, _signer);
-    setSigner(_signer);
     setContract(_contract);
 
     const { chainId } = await provider.getNetwork();
@@ -138,6 +137,9 @@ export default function Home() {
         <div className="w-full">
           {!walletConnected ? (
             <div className="flex flex-col items-center">
+              <h2>
+                Connect your wallet to the Rinkeby Test Network in order to use
+              </h2>
               <button
                 onClick={connectWallet}
                 className="text-2xl w-2/3 mt-8 font-bold p-4 rounded bg-teal-400"
@@ -147,7 +149,7 @@ export default function Home() {
             </div>
           ) : (
             <div>
-              <div className="flex justify-center mt-2">
+              <div className="flex justify-center mt-2 mb-3">
                 <button
                   onClick={addTask}
                   disabled={loading}
@@ -164,7 +166,11 @@ export default function Home() {
                   className="rounded-r pl-2 focus:outline-none"
                 />
               </div>
-              {loading && <div>Loading...</div>}
+              {loading && (
+                <div className="flex justify-center">
+                  <Spinner />
+                </div>
+              )}
               <TaskWindow tasks={tasks} handleComplete={handleComplete} />
             </div>
           )}
