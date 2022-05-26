@@ -30,10 +30,6 @@ export default function Home() {
 
     const { chainId } = await provider.getNetwork();
     setNetwork(chainId);
-    // if (chainId !== 4) {
-    //   window.alert("Change the network to Rinkeby");
-    //   throw new Error("Change network to Rinkeby");
-    // }
 
     if (needSigner) {
       const signer = provider.getSigner();
