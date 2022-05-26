@@ -1,5 +1,7 @@
 import Head from "next/head";
-import Image from "next/image";
+import WalletAddress from "../components/WalletAddress";
+import ConnectWallet from "../components/ConnectWallet";
+import SwitchNetwork from "../components/SwitchNetwork";
 import TaskWindow from "../components/TaskWindow";
 import Spinner from "../components/Spinner";
 import Web3Modal from "web3modal";
@@ -38,15 +40,15 @@ export default function Home() {
     return provider;
   };
 
-  const handleAccountChange = (...args) => {
-    const accounts = args[0];
-    if (accounts[0] !== currentAccount) {
-      setCurrentAccount(accounts[0]);
-      getTasks();
-    }
-  };
-
   useEffect(() => {
+    const handleAccountChange = (...args) => {
+      const accounts = args[0];
+      if (accounts[0] !== currentAccount) {
+        setCurrentAccount(accounts[0]);
+        getTasks();
+      }
+    };
+
     window.ethereum?.on("accountsChanged", handleAccountChange);
     return () => {
       window.ethereum?.removeListener("accountsChanged", handleAccountChange);
@@ -58,6 +60,7 @@ export default function Home() {
       window.location.reload();
       setNetwork(_chainId);
     };
+
     window.ethereum?.on("chainChanged", handleChainChanged);
     return () => {
       window.ethereum?.removeListener("chainChanged", handleChainChanged);
@@ -165,26 +168,7 @@ export default function Home() {
         <meta name="description" content="To-Do List app built on Ethereum" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex justify-end">
-        <div className="flex items-center mt-10 mr-14 bg-slate-800 rounded-lg shadow-2xl p-4">
-          <div className="flex items-center mr-2">
-            <Image
-              src={"/images/ethlogo.png"}
-              alt="Ethereum Logo"
-              width={"20px"}
-              height={"25px"}
-              objectFit="cover"
-            />
-          </div>
-          {currentAccount ? (
-            <p>
-              Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)}
-            </p>
-          ) : (
-            <p>Not connected</p>
-          )}
-        </div>
-      </div>
+      <WalletAddress currentAccount={currentAccount} />
       <div className="mt-16 flex justify-center">
         <div
           className={`bg-slate-800 rounded-lg shadow-2xl px-8 pt-10 ${
@@ -196,26 +180,9 @@ export default function Home() {
           </h1>
           <div className="w-full">
             {!walletConnected ? (
-              <div className="flex justify-center">
-                <button
-                  onClick={connectWallet}
-                  className="text-2xl w-2/3 mt-8 font-bold p-4 rounded bg-teal-400"
-                >
-                  Connect Wallet
-                </button>
-              </div>
+              <ConnectWallet connectWallet={connectWallet} />
             ) : network !== 4 ? (
-              <div className="flex flex-col items-center">
-                <h2 className="mt-2 italic text-red-600">
-                  Please switch to the Rinkeby Test Network
-                </h2>
-                <button
-                  onClick={switchNetwork}
-                  className="text-2xl w-2/3 mt-6 font-bold p-4 rounded bg-teal-400"
-                >
-                  Switch to Rinkeby
-                </button>
-              </div>
+              <SwitchNetwork switchNetwork={switchNetwork} />
             ) : (
               <div>
                 <div className="flex justify-center mt-2 mb-3">
