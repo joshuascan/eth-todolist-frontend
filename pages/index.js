@@ -189,7 +189,7 @@ export default function Home() {
                   <button
                     onClick={addTask}
                     disabled={loading}
-                    className="text-2xl h-10 w-10 rounded-l bg-teal-400"
+                    className="text-2xl h-10 w-10 pb-1 rounded-l bg-teal-400"
                   >
                     +
                   </button>
