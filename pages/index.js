@@ -175,9 +175,12 @@ export default function Home() {
             walletConnected ? "pb-8" : "pb-12"
           } mb-8 flex flex-col items-center w-1/3`}
         >
-          <h1 className="text-5xl mb-6 font-bold tracking-wide">
+          <h1 className="text-5xl mb-2 font-bold tracking-wide">
             To-Do List Dapp
           </h1>
+          <h2 className="text-l mb-4 italic tracking-wide">
+            Put your money where your task is
+          </h2>
           <div className="w-full">
             {!walletConnected ? (
               <ConnectWallet connectWallet={connectWallet} />
