@@ -173,9 +173,9 @@ export default function Home() {
         <div
           className={`bg-slate-800 rounded-lg shadow-2xl px-8 pt-10 ${
             walletConnected ? "pb-8" : "pb-12"
-          } mb-8 flex flex-col items-center w-1/3`}
+          } mb-8 flex flex-col items-center w-full sm:w-2/3 md:w-1/2 lg:w-1/3`}
         >
-          <h1 className="text-5xl mb-2 font-bold tracking-wide">
+          <h1 className="text-5xl mb-2 text-center font-bold tracking-wide">
             To-Do List Dapp
           </h1>
           <h2 className="text-l mb-4 italic tracking-wide">
