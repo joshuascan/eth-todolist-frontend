@@ -1,12 +1,12 @@
 const TaskList = ({ tasks, handleComplete, isCompleted }) => {
   return (
-    <div className="w-10/12 mt-4">
+    <div className="w-full md:w-10/12 mt-4">
       {tasks.map((task) => {
         if (isCompleted === task.completed)
           return (
             <div
               key={task.id}
-              className="flex my-8 pr-6 rounded items-center bg-slate-600 h-16 w-full"
+              className="flex my-8 rounded items-center bg-slate-600 h-16 w-full"
             >
               <button
                 type="button"
