@@ -6,7 +6,7 @@ const ConnectWallet = ({ connectWallet }) => {
       <MetaMaskButton connectWallet={connectWallet}>
         Connect Wallet
       </MetaMaskButton>
-      <p className="mt-8">Don&apos;t have MetaMask?</p>
+      <p className="mt-6 sm:mt-8">Don&apos;t have MetaMask?</p>
       <a
         href="https://metamask.io/"
         target="_blank"

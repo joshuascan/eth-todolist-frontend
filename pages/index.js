@@ -179,7 +179,7 @@ export default function Home() {
           <h1 className="text-5xl mb-2 text-center font-bold tracking-wide">
             To-Do List Dapp
           </h1>
-          <h2 className="text-l mb-4 italic tracking-wide">
+          <h2 className="text-l text-center sm:mb-4 italic tracking-wide">
             Put your money where your task is
           </h2>
           <div className="w-full">
