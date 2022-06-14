@@ -168,12 +168,13 @@ export default function Home() {
         <meta name="description" content="To-Do List app built on Ethereum" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <WalletAddress currentAccount={currentAccount} />
-      <div className="mt-16 flex justify-center">
+      <div className="sm:mt-16 flex justify-center">
         <div
           className={`bg-slate-800 rounded-lg shadow-2xl px-8 pt-10 ${
             walletConnected ? "pb-8" : "pb-12"
-          } mb-8 flex flex-col items-center w-full sm:w-2/3 md:w-1/2 lg:w-1/3`}
+          } sm:mb-8 flex flex-col items-center w-full sm:w-2/3 md:w-1/2 lg:w-1/3`}
         >
           <h1 className="text-5xl mb-2 text-center font-bold tracking-wide">
             To-Do List Dapp
